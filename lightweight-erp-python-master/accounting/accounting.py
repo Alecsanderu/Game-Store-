@@ -19,80 +19,71 @@ import data_manager
 import common
 
 
+filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-master/accounting/items.csv'
+
+
 def start_module():
-    """
-    Starts this module and displays its menu.
-     * User can access default special features from here.
-     * User can go back to main menu from here.
-
-    Returns:
-        None
-    """
-
-    # you code
+    table = data_manager.get_table_from_file(filename)
+    show_table(table)
+    ui.print_menu("Accounting Manager", common.submenu_options("accounting"),
+                  "Go back to the main menu")
+    option = ui.get_inputs(["Please enter a number: "], "")[0]
+    if option == "1":
+        add(table)
+    elif option == "2":
+        id_ = ui.get_inputs(["Enter id to remove: "], "")
+        remove(table, id_)
+    elif option == "3":
+        id_ = ui.get_inputs(["Enter id to update: "], "")
+        update(table, id_)
 
 
 def show_table(table):
-    """
-    Display a table
-
-    Args:
-        table (list): list of lists to be displayed.
-
-    Returns:
-        None
-    """
-
-    # your code
+    title_list = ["id", "month", "day", "year", "type", "amount"]
+    ui.print_table(table, title_list)
 
 
 def add(table):
-    """
-    Asks user for input and adds it into the table.
-
-    Args:
-        table (list): table to add new record to
-
-    Returns:
-        list: Table with a new record
-    """
-
-    # your code
-
-    return table
+    id_ = common.generate_random(table)
+    new_element = ui.get_inputs(['Month:', 'Day:', 'Year:', 'Type(in/out):',
+                                 'Amount:'], 'Provide the informations of the new elememnt!')
+    new_element.insert(0, id_)
+    table.append(new_element)
+    del(table[0])
+    data_manager.write_table_to_file(filename, table)
 
 
 def remove(table, id_):
-    """
-    Remove a record with a given id from the table.
-
-    Args:
-        table (list): table to remove a record from
-        id_ (str): id of a record to be removed
-
-    Returns:
-        list: Table without specified record.
-    """
-
-    # your code
-
+    for line in table:
+        if line[0] == id_[0]:
+            table.remove(line)
+    del(table[0])
+    data_manager.write_table_to_file(filename, table)
     return table
 
 
 def update(table, id_):
-    """
-    Updates specified record in the table. Ask users for new data.
-
-    Args:
-        table (list): list in which record should be updated
-        id_ (str): id of a record to update
-
-    Returns:
-        list: table with updated record
-    """
-
+    list_of_imputs = ui.get_inputs(
+        ['Please write the position of the item you want to change starting from 1 (wich is month): ', 'Write your change: '], "")
+    print(list_of_imputs)
+    position = int(list_of_imputs[0])
+    new_change = list_of_imputs[1]
+    n = len(table)
+    for i in range(n):
+        if id_[0] == table[i][0]:
+            if position == 1:
+                table[i][1] = new_change
+            elif position == 2:
+                table[i][2] = new_change
+            elif position == 3:
+                table[i][3] = new_change
+            elif position == 4:
+                table[i][4] = new_change
+            elif position == 5:
+                table[i][5] = new_change
+    del(table[0])
+    data_manager.write_table_to_file(filename, table)
     # your code
-
     return table
 
 

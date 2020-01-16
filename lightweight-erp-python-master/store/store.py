@@ -18,6 +18,11 @@ import data_manager
 import common
 
 filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-master/store/games.csv'
+INDEX_ID = 0
+INDEX_TITLE = 1
+INDEX_MANUFACTURER = 2
+INDEX_PRICE = 3
+INDEX_STOCK = 4
 
 
 def start_module():
@@ -33,19 +38,24 @@ def start_module():
     # your code
     table = data_manager.get_table_from_file(filename)
     show_table(table)
-    ui.print_menu("Store manager", common.submenu_options(),
+    ui.print_menu("Store manager", common.submenu_options("store"),
                   "Go back to the main menu")
     option = ui.get_inputs(["Please enter a number: "], "")[0]
     if option == "1":
         add(table)
     elif option == "2":
-        id_ = input("Enter id to remove: ")
+        id_ = ui.get_inputs(["Enter id to remove: "], "")
         remove(table, id_)
     elif option == "3":
-        id_ = input("Enter id to update: ")
+        id_ = ui.get_inputs(["Enter id to update: "], "")
         update(table, id_)
     elif option == "0":
         pass
+    elif option == "4":
+        get_counts_by_manufacturers(table)
+    elif option == "5":
+        manufacturer = ui.get_inputs(["What Manufacturer you want?"], "")
+        get_average_by_manufacturer(table, manufacturer)
 
 
 def show_table(table):
@@ -77,6 +87,13 @@ def add(table):
 
     # your code
 
+    id_ = common.generate_random(table)
+    new_element = ui.get_inputs(['Game name:', 'Manufacturer:', 'Price:',
+                                 'Stock:'], 'Provide the informations of the new elememnt!')
+    new_element.insert(INDEX_ID, id_)
+    table.append(new_element)
+    del(table[0])
+    data_manager.write_table_to_file(filename, table)
     return table
 
 
@@ -93,24 +110,33 @@ def remove(table, id_):
     """
 
     # your code
-
+    for line in table:
+        if line[INDEX_ID] == id_[INDEX_ID]:
+            table.remove(line)
+    del(table[0])
+    data_manager.write_table_to_file(filename, table)
     return table
 
 
 def update(table, id_):
-    """
-    Updates specified record in the table. Ask users for new data.
-
-    Args:
-        table: list in which record should be updated
-        id_ (str): id of a record to update
-
-    Returns:
-        list: table with updated record
-    """
-
-    # your code
-
+    list_of_imputs = ui.get_inputs(
+        ['Please write the position of the item you want to change starting from 1 (wich is title): ', 'Write your change: '], "")
+    print(list_of_imputs)
+    position = int(list_of_imputs[INDEX_ID])
+    new_change = list_of_imputs[1]
+    n = len(table)
+    for i in range(n):
+        if id_[INDEX_ID] == table[i][INDEX_ID]:
+            if position == 1:
+                table[i][INDEX_TITLE] = new_change
+            elif position == 2:
+                table[i][INDEX_MANUFACTURER] = new_change
+            elif position == 3:
+                table[i][INDEX_PRICE] = new_change
+            elif position == 4:
+                table[i][INDEX_STOCK] = new_change
+    del(table[0])
+    data_manager.write_table_to_file(filename, table)
     return table
 
 
@@ -129,6 +155,19 @@ def get_counts_by_manufacturers(table):
     """
 
     # your code
+    manufacturer_games_count = {}
+    del(table[0])
+    for lines in table:
+        if lines[INDEX_MANUFACTURER] in manufacturer_games_count:
+            manufacturer_games_count[lines[INDEX_MANUFACTURER]] += 1
+        else:
+            manufacturer_games_count[lines[INDEX_MANUFACTURER]] = 1
+    result = ""
+    for manufacturer, count in manufacturer_games_count.items():
+        result += "{0} : {1} games \n".format(manufacturer, count)
+
+    ui.print_result(result, "Games by:")
+    return manufacturer_games_count
 
 
 def get_average_by_manufacturer(table, manufacturer):
@@ -144,3 +183,13 @@ def get_average_by_manufacturer(table, manufacturer):
     """
 
     # your code
+    total_items_manufacturer = 0
+    total_games_by_manufacturer = 0
+    for line in table:
+        if manufacturer[INDEX_ID] == line[INDEX_MANUFACTURER]:
+            line[INDEX_STOCK] = int(line[INDEX_STOCK])
+            total_games_by_manufacturer += line[INDEX_STOCK]
+            total_items_manufacturer += 1
+    average = total_games_by_manufacturer/total_items_manufacturer
+    ui.print_result(average, "Average manufacturer")
+    return average
