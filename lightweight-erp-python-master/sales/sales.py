@@ -30,19 +30,36 @@ INDEX_YEAR = 5
 def start_module():
     table = data_manager.get_table_from_file(filename)
     show_table(table)
-    ui.print_menu("Sales Manager Menu", common.submenu_options("sales"),
-                  "Go back to the main menu")
-    option = ui.get_inputs(["Please enter a number: "], "")[0]
+    ui.print_menu("Sales Manager Menu", common.submenu_options(
+        "sales"), "Go back to the main menu")
+    while True:
+        option = ui.get_inputs(["Please enter a number: "], "")[0]
+        if common.check_submenu_option(option) == False:
+            ui.print_error_message("Index out of range!\n")
+        elif common.check_submenu_option(option) == ValueError:
+            ui.print_error_message("Please enter a number!\n")
+        else:
+            break
     if option == "1":
         add(table)
     elif option == "2":
-        id_ = ui.get_inputs(["Enter id to remove: "], "")
+        while True:
+            id_ = ui.get_inputs(["Enter id to remove: "], "")
+            if common.check_functions_inputs(id_, table, 0) == False:
+                ui.print_error_message(
+                    "'{0}' does not exist in your file!".format(id_[0]))
+            else:
+                break
         remove(table, id_)
     elif option == "3":
-        id_ = ui.get_inputs(["Enter id to update: "], "")
+        while True:
+            id_ = ui.get_inputs(["Enter id to update: "], "")
+            if common.check_functions_inputs(id_, table, 0) == False:
+                ui.print_error_message(
+                    "'{0}' does not exist in your file!".format(id_[0]))
+            else:
+                break
         update(table, id_)
-    elif option == "0":
-        pass
     elif option == "4":
         get_lowest_price_item_id(table)
     elif option == "5":
@@ -52,14 +69,18 @@ def start_module():
         answer_1 = common.check_date(month_from[0], day_from[0], year_from[0])
         if answer_1 is not True:
             ui.print_error_message(answer_1)
+            exit()
         month_to = ui.get_inputs(["Month to: "], "")
         day_to = ui.get_inputs(["Day to: "], "")
         year_to = ui.get_inputs(["Year to: "], "")
         answer_2 = common.check_date(month_to[0], day_to[0], year_to[0])
         if answer_2 is not True:
             ui.print_error_message(answer_2)
+
         get_items_sold_between(table, month_from, day_from,
                                year_from, month_to, day_to, year_to)
+    elif option == "0":
+        pass
 
 
 def show_table(table):
@@ -159,19 +180,26 @@ def get_items_sold_between(table, month_from, day_from, year_from, month_to, day
 
     # your code
     del(table[0])
+    to_remove = [[]]
     for line in table:
         if int(line[INDEX_YEAR]) < int(year_from[0]) or int(line[INDEX_YEAR]) > int(year_to[0]):
-            table.remove(line)
+            to_remove.append(line)
         elif int(line[INDEX_YEAR]) == int(year_from[0]) and int(line[INDEX_MONTH]) < int(month_from[0]):
-            table.remove(line)
+            to_remove.append(line)
         elif int(line[INDEX_YEAR]) == int(year_from[0]) and int(line[INDEX_MONTH]) == int(month_from[0]) and int(line[INDEX_DAY]) < int(day_from[0]):
-            table.remove(line)
+            to_remove.append(line)
         elif int(line[INDEX_YEAR]) == int(year_to[0]) and int(line[INDEX_MONTH]) > int(month_to[0]):
-            table.remove(line)
+            to_remove.append(line)
         elif int(line[INDEX_YEAR]) == int(year_to[0]) and int(line[INDEX_MONTH]) == int(month_to[0]) and int(line[4]) > int(day_to[0]):
+            to_remove.append(line)
+
+    for line in to_remove:
+        if line in table:
             table.remove(line)
+
+    ui.print_result("These are the items sold between your given dates ", "")
+    ui.print_table(table, ["id", "title", "price", "month", "day", "year"])
+    return table
 
     # for r in table:
     #     return '%s %s %s %s %s %s' % tuple(r)
-    ui.print_result("This is the list of games", "")
-    ui.print_table(table, ["id", "title", "price", "month", "day", "year"])

@@ -104,13 +104,7 @@ def get_oldest_person(table):
     Returns:
         list: A list of strings (name or names if there are two more with the same value)
     """
-    # oldest_person = []
-    # del(table[0])
-    # current_year = 2020
-    # age = current_year - int(table[0][INDEX_BIRTH_YEAR])
-    # name = None
-    # for i in table:
-    #     actual_age =
+
 
 
 def get_persons_closest_to_average(table):

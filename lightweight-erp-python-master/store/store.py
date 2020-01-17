@@ -38,24 +38,49 @@ def start_module():
     # your code
     table = data_manager.get_table_from_file(filename)
     show_table(table)
-    ui.print_menu("Store manager", common.submenu_options("store"),
+    ui.print_menu("Store manager", common.submenu_options('store'),
                   "Go back to the main menu")
-    option = ui.get_inputs(["Please enter a number: "], "")[0]
+    while True:
+        option = ui.get_inputs(["Please enter a number: "], "")[0]
+        if common.check_submenu_option(option) == False:
+            ui.print_error_message("Index out of range!\n")
+        elif common.check_submenu_option(option) == ValueError:
+            ui.print_error_message("Please enter a number!\n")
+        else:
+            break
     if option == "1":
         add(table)
     elif option == "2":
-        id_ = ui.get_inputs(["Enter id to remove: "], "")
+        while True:
+            id_ = ui.get_inputs(["Enter id to remove: "], "")
+            if common.check_functions_inputs(id_, table, 0) == False:
+                ui.print_error_message(
+                    "'{0}' does not exist in your file!".format(id_[0]))
+            else:
+                break
         remove(table, id_)
     elif option == "3":
-        id_ = ui.get_inputs(["Enter id to update: "], "")
+        while True:
+            id_ = ui.get_inputs(["Enter id to update: "], "")
+            if common.check_functions_inputs(id_, table, 0) == False:
+                ui.print_error_message(
+                    "'{0}' does not exist in your file!".format(id_[0]))
+            else:
+                break
         update(table, id_)
-    elif option == "0":
-        pass
     elif option == "4":
         get_counts_by_manufacturers(table)
     elif option == "5":
-        manufacturer = ui.get_inputs(["What Manufacturer you want?"], "")
+        while True:
+            manufacturer = ui.get_inputs(["Manufacturer: "], "")
+            if common.check_functions_inputs(manufacturer, table, 2) == False:
+                ui.print_error_message(
+                    "'{0}' does not exist in your file!".format(manufacturer[0]))
+            else:
+                break
         get_average_by_manufacturer(table, manufacturer)
+    elif option == "0":
+        pass
 
 
 def show_table(table):

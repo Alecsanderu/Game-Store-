@@ -29,20 +29,39 @@ INDEX_DURABILITY = 4
 def start_module():
     table = data_manager.get_table_from_file(filename)
     show_table(table)
-    ui.print_menu("Inventory manager", common.submenu_options(
-        "inventory"), "Go back to the main menu")
-    option = ui.get_inputs(["Please enter a number: "], "")[0]
+    ui.print_menu("Inventory manager", common.submenu_options("inventory"), "Go back to the main menu")
+    while True:
+        option = ui.get_inputs(["Please enter a number: "], "")[0]
+        if common.check_submenu_option(option) == False:
+            ui.print_error_message("Index out of range!\n")
+        elif common.check_submenu_option(option) == ValueError:
+            ui.print_error_message("Please enter a number!\n")
+        else:
+            break
     if option == "1":
         add(table)
     elif option == "2":
-        id_ = ui.get_inputs(["Enter id to remove: "], "")
+        while True:
+            id_ = ui.get_inputs(["Enter id to remove: "], "")
+            if common.check_functions_inputs(id_, table, 0) == False:
+                ui.print_error_message("'{0}' does not exist in your file!".format(id_[0]))
+            else:
+                break
         remove(table, id_)
     elif option == "3":
-        id_ = ui.get_inputs(["Enter id to update: "], "")
+        while True:
+            id_ = ui.get_inputs(["Enter id to update: "], "")
+            if common.check_functions_inputs(id_, table, 0) == False:
+                ui.print_error_message("'{0}' does not exist in your file!".format(id_[0]))
+            else:
+                break
         update(table, id_)
     elif option == "4":
-        year_input = ui.get_inputs(["Enter year: "], "")
-        get_available_items(table, year_input)
+        year = ui.get_inputs(["Enter year:"], "")
+        if type(year) != int:
+            ui.print_error_message("Incorrect year")
+        else:
+            get_available_items(table, year)
     elif option == "5":
         get_average_durability_by_manufacturers(table)
     elif option == "0":
