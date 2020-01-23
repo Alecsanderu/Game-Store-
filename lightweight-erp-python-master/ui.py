@@ -64,6 +64,25 @@ def print_table(table, title_list):
     print(data)
     print(lower_bar)
 
+    # table += [title_list]
+
+    # column_widths = []
+    # table_by_column = [list(i) for i in zip(*table)]
+    # for col in table_by_column:
+    #     lengths = [len(cell) for cell in col]
+    #     column_widths.append(max(lengths))
+
+    # for row in table:
+    #     cells_and_widths = zip(row, column_widths)
+    #     row_str = []
+    #     for item in cells_and_widths:
+    #         cell, width = item
+    #         word_width = len(cell)
+    #         width = (width - word_width) + 2
+    #         cell = "%s".center(width) % cell
+    #         row_str.append(cell)
+    #     print("|%s|" % ("|".join(row_str)))
+
 
 def print_result(result, label):
     """

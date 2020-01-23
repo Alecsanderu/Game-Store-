@@ -15,7 +15,7 @@ import data_manager
 # common module
 import common
 
-filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-master/hr/persons.csv'
+filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-crython/hr/persons.csv'
 
 INDEX_ID = 0
 INDEX_NAME = 1
@@ -104,7 +104,17 @@ def get_oldest_person(table):
     Returns:
         list: A list of strings (name or names if there are two more with the same value)
     """
-
+    del(table[0])
+    result = []
+    current_oldest = 9999
+    for person in table:
+        if int(person[INDEX_BIRTH_YEAR]) < int(current_oldest):
+            current_oldest = person[INDEX_BIRTH_YEAR]
+    for person in table:
+        if int(person[INDEX_BIRTH_YEAR]) == int(current_oldest):
+            result.append(person[INDEX_NAME])
+    ui.print_result(result, "The Oldest:  ")
+    return result
 
 
 def get_persons_closest_to_average(table):
@@ -119,3 +129,25 @@ def get_persons_closest_to_average(table):
     """
 
     # your code
+    del(table[0])
+    names = []
+    birth_years = []
+    years_sum = 0
+    for years in table:
+        birth_years.append(years[INDEX_BIRTH_YEAR])
+    for element in birth_years:
+        years_sum += int(element)
+    average_birth_year = round(years_sum / len(birth_years))
+
+    to_compare = abs(int(table[0][INDEX_BIRTH_YEAR]) - average_birth_year)
+
+    for i in range(len(birth_years)):
+        element = int(table[i][INDEX_BIRTH_YEAR])
+        temp = abs(element - average_birth_year)
+
+        if temp < to_compare:
+            to_compare = temp
+            names.append(table[i][INDEX_NAME])
+
+    ui.print_result(str(names).strip('[]').replace(
+        "'", ""), "Closest to average: ")

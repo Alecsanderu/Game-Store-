@@ -51,6 +51,15 @@ def submenu_options(module):
         options.append(
             "What is the id of the item that was sold for the lowest price?")
         options.append("Which items are sold between two given dates?")
+        options.append("Enter ID of the game to get title!")
+        options.append("Get the ID of the item that was sold most recently")
+        options.append(
+            "Get the TITLE of the item that was sold most recently.")
+        options.append("Get the sum of the items in item IDs")
+        options.append("Get the CUSTOMER ID that belongs to the given SALE ID")
+        options.append("Get Customers Id's")
+        options.append("Get SALES ID for CUSTOMER ID")
+        options.append("Get number of sales per CUSTOMER ID")
     elif module == "inventory":
         options.append(
             "Which items have not exceeded their durability yet (in a given year)?")
@@ -64,13 +73,13 @@ def submenu_options(module):
 
 
 def check_submenu_option(option):
-    options = [1, 2, 3, 4, 5]
+    options = list(range(0, 99))
     try:
         if int(option) not in options:
             return False
         else:
             return True
-    except ValueError as error:
+    except ValueError:
         return ValueError
 
 
@@ -124,3 +133,11 @@ def check_date(month, day, year):
                 return True
         else:
             return "at least one date error -> Day input must be between 1 and 31"
+
+
+def sorting_algorithm(lists):
+    for item in lists:
+        for i in range(0, len(lists) - 1):
+            if lists[i] > lists[i + 1]:
+                lists[i], lists[i + 1] = lists[i + 1], lists[i]
+    return lists

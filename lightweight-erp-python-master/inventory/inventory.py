@@ -17,7 +17,7 @@ import data_manager
 # common module
 import common
 
-filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-master/inventory/inventory.csv'
+filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-crython/inventory/inventory.csv'
 
 INDEX_ID = 0
 INDEX_NAME = 1
@@ -29,7 +29,8 @@ INDEX_DURABILITY = 4
 def start_module():
     table = data_manager.get_table_from_file(filename)
     show_table(table)
-    ui.print_menu("Inventory manager", common.submenu_options("inventory"), "Go back to the main menu")
+    ui.print_menu("Inventory manager", common.submenu_options(
+        "inventory"), "Go back to the main menu")
     while True:
         option = ui.get_inputs(["Please enter a number: "], "")[0]
         if common.check_submenu_option(option) == False:
@@ -44,7 +45,8 @@ def start_module():
         while True:
             id_ = ui.get_inputs(["Enter id to remove: "], "")
             if common.check_functions_inputs(id_, table, 0) == False:
-                ui.print_error_message("'{0}' does not exist in your file!".format(id_[0]))
+                ui.print_error_message(
+                    "'{0}' does not exist in your file!".format(id_[0]))
             else:
                 break
         remove(table, id_)
@@ -52,7 +54,8 @@ def start_module():
         while True:
             id_ = ui.get_inputs(["Enter id to update: "], "")
             if common.check_functions_inputs(id_, table, 0) == False:
-                ui.print_error_message("'{0}' does not exist in your file!".format(id_[0]))
+                ui.print_error_message(
+                    "'{0}' does not exist in your file!".format(id_[0]))
             else:
                 break
         update(table, id_)

@@ -17,7 +17,7 @@ import data_manager
 # common module
 import common
 
-filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-master/store/games.csv'
+filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-crython/store/games.csv'
 INDEX_ID = 0
 INDEX_TITLE = 1
 INDEX_MANUFACTURER = 2

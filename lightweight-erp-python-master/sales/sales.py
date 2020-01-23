@@ -8,6 +8,7 @@ Data table structure:
     * month (number): Month of the sale
     * day (number): Day of the sale
     * year (number): Year of the sale
+    * customer_id (string): id from the crm
 """
 
 # everything you'll need is imported:
@@ -18,13 +19,16 @@ import data_manager
 # common module
 import common
 
-filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-master/sales/sales.csv'
+filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-crython/sales/sales.csv'
+# filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-crython/sales/sales2.csv'
+
 INDEX_ID = 0
 INDEX_TITLE = 1
 INDEX_PRICE = 2
 INDEX_MONTH = 3
 INDEX_DAY = 4
 INDEX_YEAR = 5
+INDEX_CUSTOMER = 6
 
 
 def start_module():
@@ -79,12 +83,34 @@ def start_module():
 
         get_items_sold_between(table, month_from, day_from,
                                year_from, month_to, day_to, year_to)
+    elif option == "6":
+        id = input("Please Enter ID: ")
+        get_title_by_id(id)
+    elif option == "7":
+        get_item_id_sold_last_from_table(table)
+    elif option == "8":
+        get_item_title_sold_last_from_table(table)
+    elif option == "9":
+        item_ids = ui.get_inputs(
+            ["Please enter the ID's,separated by comma, to get the sum of the titles assigned to the IDs: "], "")
+        splitted_given_ids = item_ids[0].split(",")
+        get_the_sum_of_prices_from_table(table, splitted_given_ids)
+    elif option == "10":
+        sale_id = ui.get_inputs(["Enter Id of Sale:"], "")
+        get_customer_id_by_sale_id_from_table(table, sale_id)
+    elif option == "11":
+        get_all_customer_ids_from_table(table)
+    elif option == "12":
+        get_all_sales_ids_for_customer_ids_from_table(table)
+    elif option == "13":
+        get_num_of_sales_per_customer_ids_from_table(table)
     elif option == "0":
         pass
 
 
 def show_table(table):
-    title_list = ["id", "title", "price", "month", "day", "year"]
+    title_list = ["id", "title", "price",
+                  "month", "day", "year", "customer_id"]
     ui.print_table(table, title_list)
 
 
@@ -130,9 +156,6 @@ def update(table, id_):
     del(table[0])
     data_manager.write_table_to_file(filename, table)
 
-
-# special functions:
-# ------------------
 
 def get_lowest_price_item_id(table):
     """
@@ -203,3 +226,340 @@ def get_items_sold_between(table, month_from, day_from, year_from, month_to, day
 
     # for r in table:
     #     return '%s %s %s %s %s %s' % tuple(r)
+
+
+# functions supports data analyser
+# --------------------------------
+
+
+def get_title_by_id(id):
+    """
+    Reads the table with the help of the data_manager module.
+    Returns the title (str) of the item with the given id (str) on None om case of non-existing id.
+
+    Args:
+        id (str): the id of the item
+
+    Returns:
+        str: the title of the item
+    """
+    table = data_manager.get_table_from_file(filename)
+    for line in table:
+        result = "No Title with this ID"
+        if line[INDEX_ID] == id:
+            result = str(line[INDEX_TITLE])
+    ui.print_result(result, f"The Title for {id} is:")
+
+
+def get_title_by_id_from_table(table, id):
+    """
+    Returns the title (str) of the item with the given id (str) on None om case of non-existing id.
+
+    Args:
+        table (list of lists): the sales table
+        id (str): the id of the item
+
+    Returns:
+        str: the title of the item
+    """
+
+    for line in table:
+        result = "No Title with this ID"
+        if line[INDEX_ID] == id:
+            result = str(line[INDEX_TITLE])
+    ui.print_result(result, f"The Title for {id} is:")
+
+
+def get_item_id_sold_last():
+    """
+    Reads the table with the help of the data_manager module.
+    Returns the _id_ of the item that was sold most recently.
+
+    Returns:
+        str: the _id_ of the item that was sold most recently.
+    """
+    table = data_manager.get_table_from_file(filename)
+    last_sold_item_id = ""
+    dates = []
+    for line in table:
+        temp = []
+        temp.append(int(line[INDEX_YEAR]))
+        temp.append(int(line[INDEX_MONTH]))
+        temp.append(int(line[INDEX_DAY]))
+        dates.append(temp)
+
+    dates = list(reversed(common.sorting_algorithm(dates)))
+    print(dates)
+
+    for line in table:
+        if dates[0][0] == int(line[INDEX_YEAR]) and dates[0][1] == int(line[INDEX_MONTH]) and dates[0][2] == int(line[INDEX_DAY]):
+            last_sold_id = str(line[INDEX_ID])
+    ui.print_result(last_sold_id, "This is the ID for the last sold game: ")
+
+
+def get_item_id_sold_last_from_table(table):
+    """
+    Returns the _id_ of the item that was sold most recently.
+
+    Args:
+        table (list of lists): the sales table
+
+    Returns:
+        str: the _id_ of the item that was sold most recently.
+    """
+
+    last_sold_item_id = ""
+    dates = []
+    del(table[0])
+
+    dates = []
+    for line in table:
+        temp = []
+        temp.append(int(line[INDEX_YEAR]))
+        temp.append(int(line[INDEX_MONTH]))
+        temp.append(int(line[INDEX_DAY]))
+        dates.append(temp)
+
+    dates = list(reversed(common.sorting_algorithm(dates)))
+    print(dates)
+    # last_sold_id = None
+    for line in table:
+        if dates[0][0] == int(line[INDEX_YEAR]) and dates[0][1] == int(line[INDEX_MONTH]) and dates[0][2] == int(line[INDEX_DAY]):
+            last_sold_id = str(line[INDEX_ID])
+    ui.print_result(last_sold_id, "This is the Id for the last sold game")
+
+
+def get_item_title_sold_last_from_table(table):
+    """
+    Returns the _title_ of the item that was sold most recently.
+
+    Args:
+        table (list of lists): the sales table
+
+    Returns:
+        str: the _title_ of the item that was sold most recently.
+    """
+
+    last_sold_item_id = ""
+    dates = []
+    del(table[0])
+
+    dates = []
+    for line in table:
+        temp = []
+        temp.append(int(line[INDEX_YEAR]))
+        temp.append(int(line[INDEX_MONTH]))
+        temp.append(int(line[INDEX_DAY]))
+        dates.append(temp)
+
+    dates = list(reversed(common.sorting_algorithm(dates)))
+    print(dates)
+    # last_sold_id = None
+    for line in table:
+        if dates[0][0] == int(line[INDEX_YEAR]) and dates[0][1] == int(line[INDEX_MONTH]) and dates[0][2] == int(line[INDEX_DAY]):
+            last_sold_id = str(line[INDEX_TITLE])
+    ui.print_result(last_sold_id, "This is the Id for the last sold game")
+
+
+def get_the_sum_of_prices(item_ids):
+    """
+    Reads the table of sales with the help of the data_manager module.
+    Returns the sum of the prices of the items in the item_ids.
+
+    Args:
+        item_ids (list of str): the ids
+
+    Returns:
+        number: the sum of the items' prices
+    """
+
+    table = data_manager.get_table_from_file(filename)
+    sum_of_prices = 0
+    for i in range(len(table)):
+        if table[i][INDEX_ID] in item_ids:
+            sum_of_prices += int(table[i][INDEX_PRICE])
+    ui.print_result(sum_of_prices, "Sum of prices: ")
+
+
+def get_the_sum_of_prices_from_table(table, item_ids):
+    """
+    Returns the sum of the prices of the items in the item_ids.
+
+    Args:
+        table (list of lists): the sales table
+        item_ids (list of str): the ids
+
+    Returns:
+        number: the sum of the items' prices
+    """
+
+    sum_of_prices = 0
+    del(table[0])
+    for i in range(len(table)):
+        if table[i][INDEX_ID] in item_ids:
+            sum_of_prices += int(table[i][INDEX_PRICE])
+    ui.print_result(sum_of_prices, "Sum of prices: ")
+
+
+def get_customer_id_by_sale_id(sale_id):
+    """
+    Reads the sales table with the help of the data_manager module.
+    Returns the customer_id that belongs to the given sale_id
+    or None if no such sale_id is in the table.
+
+    Args:
+         sale_id (str): sale id to search for
+    Returns:
+         str: customer_id that belongs to the given sale id
+    """
+    table = data_manager.get_table_from_file(filename)
+    del(table[0])
+    customer_id = ""
+    for i in range(len(table)):
+        if table[i][INDEX_ID] == sale_id[0]:
+            customer_id = str(table[i][INDEX_CUSTOMER])
+    ui.print_result(customer_id, f"This is the customer ID for {sale_id}: ")
+
+
+def get_customer_id_by_sale_id_from_table(table, sale_id):
+    """
+    Returns the customer_id that belongs to the given sale_id
+    or None if no such sale_id is in the table.
+
+    Args:
+        table: table to remove a record from
+        sale_id (str): sale id to search for
+    Returns:
+        str: customer_id that belongs to the given sale id
+    """
+    del(table[0])
+    customer_id = ""
+    for i in range(len(table)):
+        if table[i][INDEX_ID] == sale_id[0]:
+            customer_id = str(table[i][INDEX_CUSTOMER])
+    ui.print_result(customer_id, f"This is the customer ID for {sale_id}: ")
+
+
+def get_all_customer_ids():
+    """
+    Reads the sales table with the help of the data_manager module.
+
+    Returns:
+         set of str: set of customer_ids that are present in the table
+    """
+    table = data_manager.get_table_from_file(filename)
+    customer_ids = set()
+    del(table[0])
+    for line in table:
+        customer_ids.add(line[INDEX_CUSTOMER])
+    ui.print_result(customer_ids, "Customers IDs:")
+
+
+def get_all_customer_ids_from_table(table):
+    """
+    Returns a set of customer_ids that are present in the table.
+
+    Args:
+        table (list of list): the sales table
+    Returns:
+         set of str: set of customer_ids that are present in the table
+    """
+    customer_ids = set()
+    del(table[0])
+    for line in table:
+        customer_ids.add(line[INDEX_CUSTOMER])
+    ui.print_result(customer_ids, "Customers IDs:")
+
+
+def get_all_sales_ids_for_customer_ids():
+    """
+    Reads the customer-sales association table with the help of the data_manager module.
+    Returns a dictionary of (customer_id, sale_ids) where:
+        customer_id:
+        sale_ids (list): all the sales belong to the given customer
+    (one customer id belongs to only one tuple)
+
+    Returns:
+         (dict of (key, value): (customer_id, (list) sale_ids)) where the sale_ids list contains
+            all the sales id belong to the given customer_id
+    """
+    table = data_manager.get_table_from_file(filename)
+    customer_id = set()
+    sale_id_for_customer_id = {}
+    del(table[0])
+    for line in table:
+        customer_id.add(line[INDEX_CUSTOMER])
+    for item in customer_id:
+        sale_id_for_customer_id[item] = []
+    for line in table:
+        actual_v = sale_id_for_customer_id[line[INDEX_CUSTOMER]]
+        actual_v.append(line[INDEX_ID])
+        sale_id_for_customer_id[line[INDEX_CUSTOMER]] = actual_v
+    result = ""
+    for cust_id, sale_id in sale_id_for_customer_id.items():
+        result += "{} : {}  \n".format(cust_id, sale_id)
+    ui.print_result(result, "Sales ID For Customers ID:")
+
+
+def get_all_sales_ids_for_customer_ids_from_table(table):
+    """
+    Returns a dictionary of (customer_id, sale_ids) where:
+        customer_id:
+        sale_ids (list): all the sales belong to the given customer
+    (one customer id belongs to only one tuple)
+    Args:
+        table (list of list): the sales table
+    Returns:
+         (dict of (key, value): (customer_id, (list) sale_ids)) where the sale_ids list contains
+         all the sales id belong to the given customer_id
+    """
+
+    customer_id = set()
+    sale_id_for_customer_id = {}
+    del(table[0])
+    for line in table:
+        customer_id.add(line[INDEX_CUSTOMER])
+    for item in customer_id:
+        sale_id_for_customer_id[item] = []
+    for line in table:
+        actual_v = sale_id_for_customer_id[line[INDEX_CUSTOMER]]
+        actual_v.append(line[INDEX_ID])
+        sale_id_for_customer_id[line[INDEX_CUSTOMER]] = actual_v
+    result = ""
+    for cust_id, sale_id in sale_id_for_customer_id.items():
+        result += "{} : {}  \n".format(cust_id, sale_id)
+    ui.print_result(result, "Sales ID For Customers ID:")
+
+
+def get_num_of_sales_per_customer_ids():
+    """
+     Reads the customer-sales association table with the help of the data_manager module.
+     Returns a dictionary of (customer_id, num_of_sales) where:
+        customer_id:
+        num_of_sales (number): number of sales the customer made
+     Returns:
+         dict of (key, value): (customer_id (str), num_of_sales (number))
+    """
+    table = data_manager.get_table_from_file(filename)
+    del(table[0])
+    sales_id = {}
+    for line in table:
+        sales_id[line[INDEX_CUSTOMER]] = sales_id.get(line[INDEX_CUSTOMER], 0) + 1
+    ui.print_result(sales_id, "Number of sale per Customer ID:")
+
+
+def get_num_of_sales_per_customer_ids_from_table(table):
+    """
+     Returns a dictionary of (customer_id, num_of_sales) where:
+        customer_id:
+        num_of_sales (number): number of sales the customer made
+     Args:
+        table (list of list): the sales table
+     Returns:
+         dict of (key, value): (customer_id (str), num_of_sales (number))
+    """
+    del(table[0])
+    sales_id = {}
+    for line in table:
+        sales_id[line[INDEX_CUSTOMER]] = sales_id.get(line[INDEX_CUSTOMER], 0) + 1
+    ui.print_result(sales_id, "Number of sale per Customer ID:")

@@ -19,7 +19,7 @@ import data_manager
 import common
 
 
-filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-master/accounting/items.csv'
+filename = '/media/alex/e920e2ae-74d4-4835-8814-02915252ed46/Projects/GitHub/lightweight-erp-python-crython/accounting/items.csv'
 
 
 def start_module():
